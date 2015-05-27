@@ -4,7 +4,7 @@
 	<script type="text/javascript">
 
 		$(document).ready(function() {
-			function upload(name, blobOrFile, count, total) {
+			function upload(filename, id, blobOrFile, count, total) {
 			  var formData = new FormData();
 			  formData.append("blob", blobOrFile, count, total);
 			  var xhr = new XMLHttpRequest();
@@ -12,7 +12,8 @@
 			  xhr.onload = function(e) {
 				  
 			  };
-			  xhr.setRequestHeader("Content-Name", name);
+			  xhr.setRequestHeader("Content-Name", filename);
+			  xhr.setRequestHeader("Content-Id", id);
 			  xhr.setRequestHeader("Total-Chunks", total);
 			  xhr.send(formData);
 			}
@@ -27,6 +28,7 @@
 			    return text;
 			}
 			$('#file_input').change(function(e){
+				var filename = $(this).val().split('\\').pop();
 				var blob = this.files[0];
 
 				const BYTES_PER_CHUNK = 1020 * 1024; // 1MB chunk sizes.
@@ -38,7 +40,7 @@
 				var total = SIZE / BYTES_PER_CHUNK;
 				var id = makeid();
 				while(start < SIZE) {
-				    upload(id, blob.slice(start, end),count, Math.ceil(total));
+				    upload(filename, id, blob.slice(start, end),count, Math.ceil(total));
 				    start = end;
 				    count++;
 					end = start + BYTES_PER_CHUNK;

@@ -7,7 +7,7 @@
    <context-param> 
    		<description>Location to store uploaded file</description> 
     	<param-name>file-upload</param-name> 
-    	<param-value>C:/docs/</param-value> 
+    	<param-value>C:/docs/temp/</param-value> 
 	</context-param>
   <servlet>
   		<servlet-name>FileUploadServlet</servlet-name>

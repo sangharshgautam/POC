@@ -84,16 +84,19 @@ public class FileUploadServlet extends HttpServlet {
 					
 					int totalChunks = Integer.parseInt(request.getHeader("Total-Chunks"));
 					
+					String fileId = request.getHeader("Content-Id");
 					String fileName = request.getHeader("Content-Name");
-					Map<Integer, FileItem> parts = map.get(fileName);
+					Map<Integer, FileItem> parts = map.get(fileId);
 					if(parts == null){
-						map.put(fileName, new HashMap<Integer, FileItem>());
-						parts = map.get(fileName);
+						map.put(fileId, new HashMap<Integer, FileItem>());
+						parts = map.get(fileId);
 					}
 					if(parts !=null){
 						parts.put(chunkName, fi);
 						if(parts.size() == totalChunks){
-							file = new File(filePath + fileName);
+							String filep = filePath + fileName;
+							System.out.println(filep);
+							file = new File(filep);
 							FileOutputStream fos = new FileOutputStream(file, true);
 							int noOfBytes = 0;
 							byte[] buffer = new byte[1024];
@@ -110,7 +113,7 @@ public class FileUploadServlet extends HttpServlet {
 								fos.flush();
 							}
 							fos.close();
-							map.remove(fileName);
+							map.remove(fileId);
 						}
 						
 					}
