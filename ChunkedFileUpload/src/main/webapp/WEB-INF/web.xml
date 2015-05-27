@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app 
+   xmlns="http://java.sun.com/xml/ns/javaee" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+   version="2.5">
+   <context-param> 
+   		<description>Location to store uploaded file</description> 
+    	<param-name>file-upload</param-name> 
+    	<param-value>C:/docs/</param-value> 
+	</context-param>
+  <servlet>
+  		<servlet-name>FileUploadServlet</servlet-name>
+  		<servlet-class>org.example.FileUploadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  		<servlet-name>FileUploadServlet</servlet-name>
+  		<url-pattern>/fileUpload</url-pattern>
+  </servlet-mapping>
+</web-app>
