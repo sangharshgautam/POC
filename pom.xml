@@ -10,6 +10,6 @@
   <name>POC</name>
  
   <modules>
- 	  <module>ChunkedFileUplpoad</module>
+ 	  <module>ChunkedFileUpload</module>
   </modules>
 </project>
