@@ -1,4 +1,3 @@
-# ChunkedFileUpload
-Chunked Uploads with HTML5
-
-[![Build Status](https://travis-ci.org/sangharshgautam/POC.svg)](https://travis-ci.org/sangharshgautam/POC)
+# POC
+Proof of Concepts
+1. Chunked File Upload using Slicing and Stitching method
