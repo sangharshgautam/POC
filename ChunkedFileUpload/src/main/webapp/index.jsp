@@ -1,22 +1,40 @@
 <html>
 <head>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 	<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 	<script type="text/javascript">
 
 		$(document).ready(function() {
-			function upload(filename, id, blobOrFile, count, total) {
-			  var formData = new FormData();
-			  formData.append("blob", blobOrFile, count, total);
-			  var xhr = new XMLHttpRequest();
-			  xhr.open('POST', '/fileUpload', true);
-			  xhr.onload = function(e) {
+			function upload(filename, id, blobOrFile, count, total, length) {
+				var pbId = id+"-"+count;
+			  	$("#progressbars").append("<div id='"+pbId+"'></div>")
+				$('#'+pbId).progressbar({
+					 value: 5
+			  	});  
+				var formData = new FormData();
+			  
+			  	formData.append("blob", blobOrFile, count, total);
+			  	var xhr = new XMLHttpRequest();
+			  
+			   	xhr.upload.addEventListener("progress", function(evt) {
+		            if (evt.lengthComputable) {
+		                var percentComplete = 100* evt.loaded / evt.total;
+		                $('#'+pbId).progressbar( "option", "value", percentComplete );
+		            }
+		       }, false);
+
+			  	xhr.open('POST', '/fileUpload', true);
+			  	xhr.onload = function(e) {
 				  
-			  };
-			  xhr.setRequestHeader("Content-Name", filename);
-			  xhr.setRequestHeader("Content-Id", id);
-			  xhr.setRequestHeader("Total-Chunks", total);
-			  xhr.send(formData);
+			 	};
+			  	xhr.setRequestHeader("Content-Name", filename);
+			  	xhr.setRequestHeader("Content-Id", id);
+			  	xhr.setRequestHeader("Content-Length", length);
+			  	xhr.setRequestHeader("Total-Chunks", total);
+			  	xhr.send(formData);
 			}
+			   
 			function makeid()
 			{
 			    var text = "";
@@ -28,6 +46,7 @@
 			    return text;
 			}
 			$('#file_input').change(function(e){
+				$("#progressbars").html("");
 				var filename = $(this).val().split('\\').pop();
 				var blob = this.files[0];
 
@@ -40,7 +59,7 @@
 				var total = SIZE / BYTES_PER_CHUNK;
 				var id = makeid();
 				while(start < SIZE) {
-				    upload(filename, id, blob.slice(start, end),count, Math.ceil(total));
+					upload(filename, id, blob.slice(start, end), count, Math.ceil(total), (end-start));
 				    start = end;
 				    count++;
 					end = start + BYTES_PER_CHUNK;
@@ -58,8 +77,7 @@
         <input id="submit_btn" type="submit" value="Upload" disabled>
     </div>
 </form>
-<ul id="file_list" style="display: none;">
-    <!-- File data will be listed here -->
-</ul>
+<div id="progressbars">
+</div>
 </body>
 </html>

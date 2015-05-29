@@ -58,6 +58,8 @@ public class FileUploadServlet extends HttpServlet {
 		ServletFileUpload upload = new ServletFileUpload(factory);
 		// maximum file size to be uploaded.
 		upload.setSizeMax(maxFileSize);
+		/*TestProgressListener testProgressListener = new TestProgressListener();
+		upload.setProgressListener(testProgressListener);*/
 
 		try {
 			// Parse the request to get file items.
@@ -93,7 +95,9 @@ public class FileUploadServlet extends HttpServlet {
 					}
 					if(parts !=null){
 						parts.put(chunkName, fi);
+						System.out.println("parts Size "+parts.size());
 						if(parts.size() == totalChunks){
+							System.out.println("total achieved");
 							String filep = filePath + fileName;
 							System.out.println(filep);
 							file = new File(filep);
