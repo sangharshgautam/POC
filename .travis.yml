@@ -1,2 +1,4 @@
 language: java
 sudo: required
+addons:
+  sauce_connect: true
