@@ -7,6 +7,8 @@ import net.thucydides.core.pages.PageObject;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 public abstract class AbstractPage extends PageObject {
 	protected void isAvailable(WebElementFacade field) {
 //		Assert.assertTrue(field.isVisible());
@@ -21,4 +23,11 @@ public abstract class AbstractPage extends PageObject {
 		MatcherAssert.assertThat(options.contains(value), Matchers.is(true));
 		field.selectByValue(value);
 	}
+	protected ExpectedCondition<Boolean> elementIsDisplayed(final WebElementFacade element) {
+        return new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver driver) {
+                return (element.isDisplayed());
+            }
+        };
+    }
 }

@@ -1,58 +1,55 @@
 package org.sangharsh.pages;
 
+import java.util.List;
+
 import net.serenitybdd.core.annotations.findby.FindBy;
 import net.serenitybdd.core.pages.WebElementFacade;
 import net.thucydides.core.annotations.DefaultUrl;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-
-@DefaultUrl("http://www.google.com")
+@DefaultUrl("http://www.nikweli.com")
 public class IndexPage extends AbstractPage {
 
-	@FindBy(xpath = "//*[@id='lst-ib']")
-	private WebElementFacade searchField;
+	@FindBy(xpath = "//*[@id='details']")
+	private WebElementFacade positionDd;
 	
-	@FindBy(xpath = "//input[@value='Google Search']")
+	@FindBy(xpath = "//button[text()=' Search']")
 	private WebElementFacade btnSearch;
 	
+	@FindBy(xpath = "//div[@class='toggle-filter']/a")
+	private WebElementFacade btnAdvanceSearch;
+	
+	@FindBy(xpath = "//*[@id='districtList']")
+	private WebElementFacade district;
+	
+	@FindBy(xpath = "//*[@id='wardList']")
+	private WebElementFacade ward;
+	
 	public void checkSearchFieldIsDisplayed() {
-		isAvailable(this.searchField);	
+		isAvailable(this.positionDd);	
 	}
 
-	public void enterSearchText(String text) {
-		clearAndType(searchField, text);
+	public void position(String text) {
+		super.select(positionDd, text);
 	}
 	
-	public void clickGoogleSearch(){
+	public void search() {
 		this.btnSearch.click();
 	}
 	
 	public void waitForTextFieldTobeVisible(){
-		waitForCondition().until(textFieldIsVisible());
+		waitForCondition().until(elementIsDisplayed(positionDd));
 	}
 	
-	private ExpectedCondition<Boolean> textFieldIsVisible() {
-        return new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver driver) {
-                return (searchField.isDisplayed());
-            }
-        };
-    }
-	
-	
+	public void openAdvanceSearch(){
+		btnAdvanceSearch.click();
+	}
 
-	public void assertInlineError(String inlineError) {
-//		MatcherAssert.assertThat("Username Inline Error is displayed", usernameInlineError.isDisplayed());
-//		MatcherAssert.assertThat(usernameInlineError.getTextValue(), Matchers.is(Matchers.equalTo(inlineError)));
+	public void district(String district) {
+		select(this.district, district);
 	}
 	
-	public void assertDetails(String details) {
-//		MatcherAssert.assertThat("Error Details is displayed", errroDetails.isDisplayed());
-//		MatcherAssert.assertThat(errroDetails.getTextValue(), Matchers.is(Matchers.equalTo(details)));
+	public void ward(String ward) {
+		select(this.ward, ward);
 	}
+
 }
