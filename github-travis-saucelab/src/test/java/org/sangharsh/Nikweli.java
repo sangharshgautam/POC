@@ -1,7 +1,6 @@
 package org.sangharsh;
 import net.thucydides.core.annotations.Steps;
 
-import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Named;
 import org.jbehave.core.annotations.Then;
@@ -19,10 +18,9 @@ public class Nikweli{
 	
 	@When("position dropdown is displayed")
 	public void positionDropDownDisplayed(){
-		
 	}
 	
-	@When("the user selects $position")
+	@When("the user selects a position $position")
 	public void selectPosition(@Named("position") String position){
 		searchSteps.setPosition(position);
 	}

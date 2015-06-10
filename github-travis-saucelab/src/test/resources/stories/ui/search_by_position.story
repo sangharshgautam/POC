@@ -15,7 +15,7 @@ Scenario:  Search positions on Nikweli
 
 Given the user is on Nikweli index page
 When position dropdown is displayed
-When the user selects $position
+When the user selects a position $position
 And the user press the Search button
 Then the search result should be displayed
 Examples:
