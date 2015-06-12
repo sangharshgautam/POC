@@ -12,5 +12,8 @@
   <modules>
  	  <module>ChunkedFileUpload</module>
  	  <module>github-travis-saucelab</module>
+ 	  <!-- <module>mongodb</module>
+ 	  <module>SE7</module> -->
+ 	  <module>embedded-glassfish-tutorial</module>
   </modules>
 </project>

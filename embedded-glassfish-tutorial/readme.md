@@ -1,0 +1,1 @@
+mvn goal : clean package embedded-glassfish:run
