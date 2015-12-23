@@ -1,0 +1,61 @@
+{
+  lines: 3,
+  utterances: [
+    {
+      speaker: 'Mary',
+      text: 'Hi Jack.  What are you doing?'
+    },
+    {
+      speaker: 'Jack',
+      text: "Hi Mary.  I'm filling out a job application."
+    },
+    {
+      speaker: 'Mary',
+      text: 'Are you finished with school already?'
+    },
+    {
+      speaker: 'Jack',
+      text: 'No.  I have one more semester, but it would be great to have a job lined up.'
+    },
+   {
+      speaker: 'Mary',
+      text: " How is your day going?"
+    },
+   {
+      speaker: 'Jack',
+      text: " Quite busy.  I'm preparing for my presentation tomorrow on our marketing strategy.  I'm not even half done yet."
+    },
+   {
+      speaker: 'Mary',
+      text: "You must feel stressed out now."
+    },
+   {
+      speaker: 'Jack',
+      text: "That's an understatement."
+    },
+   {
+      speaker: 'Mary',
+      text: "What are you doing now?"
+    },
+   {
+      speaker: "Jack",
+      text: "I'm playing pool with my friends at a pool hall."
+    },
+   {
+      speaker: "Mary",
+      text: "I didn't know you play pool.  Are you having fun?"
+    },
+   {
+      speaker: "Jack",
+      text: "I'm having a great time.  How about you?  What are you doing?"
+    },
+   {
+      speaker: "Mary",
+      text: "I'm taking a break from my homework.  There seems to be no end to the amount of work I have to do."
+    },
+   {
+      speaker: "Jack",
+      text: "I'm glad I'm not in your shoes."
+    }
+  ]
+}
