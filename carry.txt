@@ -1,0 +1,227 @@
+package uk.co.sangharsh.nlp.service;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import edu.stanford.nlp.dcoref.CorefChain;
+import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefChainAnnotation;
+import edu.stanford.nlp.ie.crf.CRFClassifier;
+import edu.stanford.nlp.io.IOUtils;
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
+import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.Counter;
+import edu.stanford.nlp.trees.GrammaticalRelation;
+import edu.stanford.nlp.trees.GrammaticalStructure;
+import edu.stanford.nlp.trees.GrammaticalStructureFactory;
+import edu.stanford.nlp.trees.PennTreebankLanguagePack;
+import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
+import edu.stanford.nlp.trees.TreeGraphNode;
+import edu.stanford.nlp.trees.TreebankLanguagePack;
+import edu.stanford.nlp.trees.TypedDependency;
+import edu.stanford.nlp.util.CoreMap;
+
+public class TestNlp {
+	private static final String NLP_RESOURCE = "nlp-resources/";
+	private static final String DF_COUNTER_PATH = NLP_RESOURCE+"df-counts.ser";
+	private StanfordCoreNLP pipeline;
+	private Counter dfCounter;
+	private static final String SERIALIZED_CLASSIFIER = NLP_RESOURCE + "classifiers/english.all.3class.distsim.crf.ser.gz";
+	public TestNlp(){
+		this.dfCounter = ObjectUtil.loadObjectNoExceptions(DF_COUNTER_PATH, Counter.class);
+		this.pipeline = new StanfordCoreNLP(TestNlp.props());
+	}
+	
+	public static void main(String[] args) {
+		TestNlp nlp = new TestNlp();
+		/*List<String> summary = nlp.summarize(IOUtils.slurpFileNoExceptions("news.txt"), 3);
+		for(String line: summary){
+			System.out.println(line);
+		}*/
+		/*Map<String, Set<String>> entitiesMap = nlp.getNamedEntity1(IOUtils.slurpFileNoExceptions("news.txt"));
+		for(Entry<String, Set<String>> entry: entitiesMap.entrySet()){
+			System.out.println("-------"+entry.getKey()+"-------");
+			for(String entity: entry.getValue()){
+				System.out.println(entity);
+			}
+		}*/
+		nlp.test(IOUtils.slurpFileNoExceptions("news.txt"), 3);
+		
+	}
+
+	private void test(String text, int i) {
+		// create an empty Annotation just with the given text
+	    Annotation document = new Annotation(text);
+
+	    // run all Annotators on this text
+	    pipeline.annotate(document);
+
+	    // these are all the sentences in this document
+	    // a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
+	    List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+	    LexicalizedParser lp = LexicalizedParser.loadModel();
+		TreebankLanguagePack tlp = new PennTreebankLanguagePack();
+		
+		Set<TreeGraphNode> predicates = new HashSet<TreeGraphNode>();
+	    for(CoreMap sentence: sentences) {
+	      // traversing the words in the current sentence
+	      // a CoreLabel is a CoreMap with additional token-specific methods
+	      for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
+	        // this is the text of the token
+	        String word = token.get(TextAnnotation.class);
+	        // this is the POS tag of the token
+	        String pos = token.get(PartOfSpeechAnnotation.class);
+	        // this is the NER label of the token
+	        String ne = token.get(NamedEntityTagAnnotation.class);
+	        
+	      }
+
+	      // this is the parse tree of the current sentence
+	      Tree tree = sentence.get(TreeAnnotation.class);
+			
+			// Uncomment the following line to obtain original Stanford
+			// Dependencies
+//			 tlp.setGenerateOriginalDependencies(true);
+			GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
+			GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
+			Collection<TypedDependency> typedDependencyCollection = gs.typedDependenciesCCprocessed();
+			for(TypedDependency td : typedDependencyCollection){
+				TreeGraphNode gov= td.gov();
+				GrammaticalRelation gr = td.reln();
+				List<String> arrayList = new ArrayList<String>(){{
+					add("nsubj");
+					add("dobj");
+					add("xcomp");
+					add("agent");
+				}};
+				if(arrayList.contains(gr.toString())){
+					predicates.add(gov);
+				}
+			}
+			List<String> tmpItems = new ArrayList<String>();
+			Set<String> subjects = new HashSet<String>();
+			Set<String> objects = new HashSet<String>();
+			
+			for(TreeGraphNode n : predicates){
+				
+			}
+//			System.out.println(tdl);
+	      
+	      
+	      
+	      // this is the Stanford dependency graph of the current sentence
+	      SemanticGraph dependencies = sentence.get(CollapsedCCProcessedDependenciesAnnotation.class);
+	    }
+	    System.out.println("DONE");
+
+	    // This is the coreference link graph
+	    // Each chain stores a set of mentions that link to each other,
+	    // along with a method for getting the most representative mention
+	    // Both sentence and token offsets start at 1!
+	    Map<Integer, CorefChain> graph = document.get(CorefChainAnnotation.class);
+	    
+	    
+	    
+	}
+
+	private List<String> nameEntity(String text) {
+		List<String> result = new ArrayList<String>();
+		Annotation document = pipeline.process(text);
+		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+		Counter<String> tfs = getNamedEntity(sentences);
+		sentences = rankSentences(sentences, tfs);
+
+		for (CoreMap sentence: sentences) {
+			result.add(sentence.toString());
+		}
+		return result;
+	}
+	private Map<String, Set<String>> getNamedEntity1(String text) {
+		Map<String, Set<String>> entityMap = new HashMap<String, Set<String>>();
+		List<String> result = new ArrayList<String>();
+		CRFClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions(SERIALIZED_CLASSIFIER);
+	    List<List<CoreLabel>>	classify =	classifier.classify(text);
+        for (List<CoreLabel> coreLabels : classify) {
+            for (CoreLabel coreLabel : coreLabels) {
+                String word = coreLabel.word();
+                String answer = coreLabel.get(CoreAnnotations.AnswerAnnotation.class);
+                if(!"O".equals(answer)){
+                	result.add(word+" : "+answer);
+                	if(!entityMap.containsKey(answer)){
+                		entityMap.put(answer, new HashSet<String>());
+                	}
+                	entityMap.get(answer).add(word);
+                }
+ 
+            }
+        }
+        return entityMap;
+	}
+	private Counter<String> getNamedEntity(List<CoreMap> sentences) {
+		Counter<String> ret = new ClassicCounter<String>();
+		for (CoreMap sentence : sentences){
+			for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)){
+				String ne = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+				ret.incrementCount(ne);
+			}
+		}
+		return ret;
+	}
+
+	public List<String> summarize(String text, int numSentences) {
+		List<String> result = new ArrayList<String>();
+		Annotation document = pipeline.process(text);
+		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+		Counter<String> tfs = getTermFrequencies(sentences);
+		sentences = rankSentences(sentences, tfs);
+
+		for (CoreMap sentence: sentences.subList(0, Math.min(numSentences, sentences.size()))) {
+			result.add(sentence.toString());
+		}
+		return result;
+	}
+	private static Counter<String> getTermFrequencies(List<CoreMap> sentences) {
+		Counter<String> ret = new ClassicCounter<String>();
+
+		for (CoreMap sentence : sentences){
+			for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)){
+				 // this is the text of the token
+				String word = token.get(CoreAnnotations.TextAnnotation.class);
+				ret.incrementCount(word);
+			}
+		}
+		return ret;
+	}
+
+	private List<CoreMap> rankSentences(List<CoreMap> sentences, Counter<String> tfs) {
+		Collections.sort(sentences, new SentenceComparator(dfCounter, tfs));
+		return sentences;
+	}
+	private static Properties props() {
+		Properties props = new Properties();
+		props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner, parse");
+		props.setProperty("tokenize.language", "en");
+		props.setProperty("pos.model", "edu/stanford/nlp/models/pos-tagger/english/english-left3words-distsim.tagger");
+		return props;
+	}
+}
+http://nlp.stanford.edu/software/dependencies_manual.pdf
+http://www.nist.gov/tac/publications/2011/participant.papers/SJTU_CIT.proceedings.pdf
